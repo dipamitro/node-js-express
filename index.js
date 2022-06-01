@@ -5,7 +5,7 @@ const cors = require('cors');
 const bodyParser = require('body-parser');
 const path = require('path');
 const ip = require('ip');
-const server = require('./server/config');
+const server = require('./config/server');
 const web = require('./routes/web');
 const auth = require('./routes/auth');
 
