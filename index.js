@@ -23,6 +23,14 @@ app.use('/public', express.static(path.join(__dirname, 'public')));
 app.use('/api', web.routes);
 app.use('/api', auth.routes);
 
+app.use((err, req, res, next) => {
+    err.statusCode = err.statusCode || 500;
+    err.message = err.message || "Internal Server Error";
+    res.status(err.statusCode).json({
+        message: err.message,
+    });
+});
+
 app.listen(server.port, () => {
     console.log(`Example app listening on url http://` + ip.address() + `:` + server.port)
 });
