@@ -2,11 +2,11 @@
 
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const db = require('../../../../config/mysql');
+const mysql = require('../../../../config/mysql');
 
 const login = async (req, res, next) => {
     try {
-        db.query(`SELECT * FROM users WHERE username = ${db.escape(req.body.username)};`, (err, result) => {
+        mysql.query(`SELECT * FROM users WHERE username = ${mysql.escape(req.body.username)};`, (err, result) => {
             if (err) {
                 throw err;
                 return res.status(400).send({
@@ -30,7 +30,7 @@ const login = async (req, res, next) => {
 
                 if (bcryptResult) {
                     const token = jwt.sign({id:result[0].id},'the-super-strong-secrect',{ expiresIn: '1h' });
-                    db.query(`UPDATE users SET last_login = now() WHERE id = '${result[0].id}'`);
+                    mysql.query(`UPDATE users SET last_login = now() WHERE id = '${result[0].id}'`);
 
                     return res.status(200).send({
                         msg: 'logged in!',
@@ -51,7 +51,7 @@ const login = async (req, res, next) => {
 
 const register = async (req, res, next) => {
     try {
-        db.query(`SELECT * FROM users WHERE LOWER(username) = LOWER(${db.escape(req.body.username)});`, (err, result) => {
+        mysql.query(`SELECT * FROM users WHERE LOWER(username) = LOWER(${mysql.escape(req.body.username)});`, (err, result) => {
             if (result.length) {
                 return res.status(409).send({
                     msg: 'this username is already in use!'
@@ -65,8 +65,8 @@ const register = async (req, res, next) => {
                         });
                     }
                     else {
-                        db.query(`INSERT INTO users (name, username, email, password, phone) 
-                                VALUES ('${req.body.name}', '${req.body.username}', '${req.body.email}', ${db.escape(hash)}, '${req.body.phone}')`,
+                        mysql.query(`INSERT INTO users (name, username, email, password, phone) 
+                                VALUES ('${req.body.name}', '${req.body.username}', '${req.body.email}', ${mysql.escape(hash)}, '${req.body.phone}')`,
                             (err, result) => {
                                 if (err) {
                                     throw err;
